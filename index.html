@@ -252,6 +252,24 @@
     </div>
   </section>
 
+  <!-- BEST TIME -->
+  <section>
+    <h2><span class="dot"></span>Análisis nuevo · mejor momento para publicar</h2>
+    <p class="lead">Como Meta dejó vacío el dato de "horarios activos", lo <b>reconstruí desde los 553 posts reales</b>: qué día y a qué hora (México, UTC−6) rinde más cada publicación.</p>
+    <div class="two">
+      <div>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Engagement por día de la semana</p>
+        <div class="chartbox" style="height:250px"><canvas id="dowChart" role="img" aria-label="El lunes es el mejor día con 0.94% de engagement; el viernes el peor con 0.74%"></canvas></div>
+      </div>
+      <div>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Likes promedio por hora (MX)</p>
+        <div class="chartbox" style="height:250px"><canvas id="hourChart" role="img" aria-label="Las 15h y 11-12h son las mejores horas; 7-8h y 21-22h las peores"></canvas></div>
+      </div>
+    </div>
+    <div class="flag b"><div class="t">Ventana óptima: lunes–martes, 11–12 h o 15 h</div><div class="x">El lunes rinde +27% más engagement que el viernes. La hora 15:00 promedia 35.7 likes (vs 6–8 en la madrugada y noche). Sin embargo, la cuenta publica casi todo entre 10 y 12 h y carga el viernes — su peor día.</div></div>
+    <div class="flag a"><div class="t">Desajuste: más volumen en los peores momentos</div><div class="x">94 posts caen en viernes (día más flojo) y solo 21 a las 15 h (la mejor hora). Reasignar el calendario a la ventana óptima sube el alcance sin producir más.</div></div>
+  </section>
+
   <div class="foot">
     <div>Consultora DV · Fuente: Meta Graph API (insights privados) + scrape de los 551 posts</div>
     <div style="margin-top:8px">
@@ -318,6 +336,17 @@ new Chart(savesChart,{type:'bar',data:{labels:['Ene','Feb','Mar','Abr','May','Ju
 new Chart(ageChart,{type:'bar',data:{labels:['13-17','18-24','25-34','35-44','45-54','55-64','65+'],
   datasets:[{data:[4,295,1560,820,300,76,27],backgroundColor:['#3a3350','#ff8a5a','#ff5c8a','#ff6a3d','#c77','#3a3350','#3a3350'],borderRadius:5}]},
   options:{responsive:true,maintainAspectRatio:false,plugins:noLeg,scales:{x:{grid:gridX},y:{beginAtZero:true,grid:gridY}}}});
+
+const dowER=[0.936,0.867,0.840,0.792,0.735,0.814,0.743];
+new Chart(dowChart,{type:'bar',data:{labels:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],
+  datasets:[{data:dowER,backgroundColor:dowER.map(v=>v>=0.9?'#2ee6a6':v<=0.75?'#ff5a57':'#a78bfa'),borderRadius:5}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:noLeg,scales:{x:{grid:gridX},y:{beginAtZero:true,grid:gridY,ticks:{callback:v=>v+'%'}}}}});
+
+const hourLabels=['9h','10h','11h','12h','13h','14h','15h','16h','17h','18h','19h','20h','21h'];
+const hourData=[15.6,19.3,29.2,29.0,24.1,24.1,35.7,26.5,20.3,11.6,24.9,20.1,7.8];
+new Chart(hourChart,{type:'bar',data:{labels:hourLabels,
+  datasets:[{data:hourData,backgroundColor:hourData.map(v=>v>=29?'#2ee6a6':v<=12?'#ff5a57':'#4aa8ff'),borderRadius:4}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:noLeg,scales:{x:{grid:gridX,ticks:{maxRotation:0,autoSkip:false,font:{size:10}}},y:{beginAtZero:true,grid:gridY}}}});
 </script>
 </body>
 </html>
