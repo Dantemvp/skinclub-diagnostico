@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico @theskinclubmx · Consultora DV</title>
+<meta name="robots" content="noindex,nofollow">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root{
+    --bg0:#0b0910; --bg1:#120e18; --card:#181320; --card2:#1f1830; --line:#2c2438;
+    --ink:#f4eef6; --muted:#9b8fa8; --dim:#6e6480;
+    --coral:#ff6a3d; --pink:#ff5c8a; --red:#ff5a57; --amber:#ffb02e; --green:#2ee6a6; --blue:#4aa8ff; --violet:#a78bfa;
+    --red-bg:rgba(255,90,87,.12); --amber-bg:rgba(255,176,46,.12); --green-bg:rgba(46,230,166,.12); --blue-bg:rgba(74,168,255,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg0);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;line-height:1.6;
+    background-image:radial-gradient(900px 500px at 12% -8%,rgba(255,92,138,.14),transparent 60%),radial-gradient(900px 600px at 100% 0%,rgba(167,139,250,.12),transparent 55%);
+    background-attachment:fixed;
+  }
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 16px 60px}
+
+  /* HEADER */
+  .topbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+  .logo{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#ff6a3d,#ff5c8a 60%,#a78bfa);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:12px;text-align:center;line-height:1.05;box-shadow:0 8px 30px rgba(255,92,138,.35)}
+  h1{font-size:clamp(20px,4.6vw,28px);font-weight:800;letter-spacing:-.4px;background:linear-gradient(90deg,#fff,#ffc8d8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .sub{color:var(--muted);font-size:14px}
+  .tag{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;padding:5px 14px;border-radius:30px;background:var(--red-bg);color:#ff8d8b;border:1px solid rgba(255,90,87,.35);margin-top:8px}
+  .tag .blip{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 0 0 rgba(255,90,87,.7);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,90,87,.6)}70%{box-shadow:0 0 0 12px rgba(255,90,87,0)}100%{box-shadow:0 0 0 0 rgba(255,90,87,0)}}
+
+  /* SECTIONS */
+  section{background:linear-gradient(180deg,var(--card),var(--bg1));border:1px solid var(--line);border-radius:22px;padding:26px;margin-top:20px;
+    opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+  section.in{opacity:1;transform:none}
+  h2{font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.6px;color:var(--muted);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+  h2 .dot{width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,#ff6a3d,#ff5c8a);box-shadow:0 0 14px rgba(255,106,61,.7)}
+  .lead{font-size:14.5px;color:var(--muted);margin-bottom:18px}
+  .lead b{color:var(--ink)}
+
+  /* GAUGE */
+  .gaugewrap{display:flex;flex-wrap:wrap;gap:30px;align-items:center}
+  .gaugebox{flex:1 1 280px;text-align:center;min-width:260px}
+  .gnum{font-size:64px;font-weight:900;letter-spacing:-3px;line-height:1;background:linear-gradient(90deg,#ff6a3d,#ff5a57);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .gsub{font-size:13.5px;font-weight:800;color:#ff8d8b;text-transform:uppercase;letter-spacing:1.4px;margin-top:6px}
+  .needle{transform-origin:150px 150px;transform:rotate(-90deg);transition:transform 1.8s cubic-bezier(.2,.8,.2,1)}
+  .gauge-expl{flex:2 1 320px;min-width:280px}
+  .barrow{display:flex;align-items:center;gap:12px;margin:11px 0;font-size:13px}
+  .barrow .name{flex:0 0 210px;color:var(--muted)}
+  .track{flex:1;height:10px;background:#241d31;border-radius:8px;overflow:hidden}
+  .fill{height:100%;border-radius:8px;width:0;transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+  .barrow .pct{flex:0 0 46px;text-align:right;font-weight:800}
+  @media(max-width:680px){.barrow .name{flex-basis:130px;font-size:12px}}
+
+  /* KPIs */
+  .grid{display:grid;gap:13px}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .kpi{position:relative;background:radial-gradient(120% 120% at 0% 0%,var(--card2),var(--card));border:1px solid var(--line);border-radius:16px;padding:16px;overflow:hidden;transition:transform .25s,border-color .25s}
+  .kpi:hover{transform:translateY(-3px);border-color:#3a2f4d}
+  .kpi::after{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--coral),var(--pink));opacity:.8}
+  .kpi .l{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .kpi .v{font-size:30px;font-weight:800;margin-top:5px;letter-spacing:-1px}
+  .kpi .d{font-size:11.5px;font-weight:700;margin-top:3px}
+  .down{color:var(--red)} .up{color:var(--green)} .flat{color:var(--dim)}
+  .v.down{color:#ff7a78} .v.up{color:var(--green)}
+
+  /* charts */
+  .chartbox{position:relative;width:100%;height:300px}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;font-size:12.5px;color:var(--muted);margin-top:12px}
+  .legend span{display:flex;align-items:center;gap:7px}
+  .sw{width:11px;height:11px;border-radius:3px}
+  .two{display:grid;gap:22px;grid-template-columns:1fr 1fr}
+  @media(max-width:760px){.two{grid-template-columns:1fr}}
+
+  /* why steps */
+  .why{display:grid;gap:12px}
+  .step{display:flex;gap:14px;align-items:flex-start;padding:15px 16px;border-radius:14px;background:#15101d;border:1px solid var(--line)}
+  .step .n{flex:0 0 30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#ff6a3d,#ff5c8a);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .step .t{font-weight:700;font-size:15px} .step .x{font-size:13.5px;color:var(--muted)}
+
+  .flag{border-left:4px solid;border-radius:0 12px 12px 0;padding:13px 16px;margin-top:12px}
+  .flag.r{border-color:var(--red);background:var(--red-bg)} .flag.a{border-color:var(--amber);background:var(--amber-bg)} .flag.g{border-color:var(--green);background:var(--green-bg)} .flag.b{border-color:var(--blue);background:var(--blue-bg)}
+  .flag .t{font-weight:800;font-size:14.5px} .flag .x{font-size:13px;color:var(--muted);margin-top:2px}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}
+  th{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--dim)}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+  .pill{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 9px;border-radius:20px;margin-left:6px}
+  .pill.r{background:var(--red-bg);color:#ff8d8b} .pill.g{background:var(--green-bg);color:var(--green)} .pill.a{background:var(--amber-bg);color:var(--amber)}
+
+  .foot{text-align:center;color:var(--dim);font-size:12px;margin-top:30px;line-height:1.8}
+  .badge{display:inline-block;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:3px 10px;margin:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="logo">THE<br>SKIN<br>CLUB</div>
+    <div>
+      <h1>Diagnóstico de cuenta · @theskinclubmx</h1>
+      <div class="sub">Auditoría de salud de Instagram · Consultora DV · datos a junio 2026</div>
+      <span class="tag"><span class="blip"></span>ZONA ROJA — CRÍTICA PERO RECUPERABLE</span>
+    </div>
+  </div>
+
+  <!-- GAUGE -->
+  <section>
+    <h2><span class="dot"></span>Termómetro de quemado</h2>
+    <div class="gaugewrap">
+      <div class="gaugebox">
+        <svg viewBox="0 0 300 175" width="100%" style="max-width:320px" role="img" aria-label="Medidor de cuenta quemada en 89 de 100">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#2ee6a6"/><stop offset="0.5" stop-color="#ffb02e"/><stop offset="1" stop-color="#ff5a57"/>
+            </linearGradient>
+          </defs>
+          <path d="M30 150 A120 120 0 0 1 270 150" fill="none" stroke="#241d31" stroke-width="22" stroke-linecap="round"/>
+          <path d="M30 150 A120 120 0 0 1 270 150" fill="none" stroke="url(#g)" stroke-width="22" stroke-linecap="round" stroke-dasharray="377" stroke-dashoffset="41"/>
+          <g class="needle" id="needle">
+            <line x1="150" y1="150" x2="150" y2="46" stroke="#f4eef6" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="150" cy="150" r="10" fill="#f4eef6"/>
+          </g>
+          <text x="36" y="170" font-size="11" fill="#6e6480">0 · sana</text>
+          <text x="226" y="170" font-size="11" fill="#6e6480">100 · muerta</text>
+        </svg>
+        <div class="gnum"><span id="gcount">0</span><span style="font-size:26px;color:var(--dim)">/100</span></div>
+        <div class="gsub">Severamente quemada</div>
+      </div>
+      <div class="gauge-expl">
+        <p class="lead">El score combina 4 señales. Cada barra muestra qué tan dañada está esa dimensión:</p>
+        <div class="barrow"><div class="name">Caída de engagement vs. su histórico</div><div class="track"><div class="fill" data-w="82.5" style="background:linear-gradient(90deg,#ff6a3d,#ff5a57)"></div></div><div class="pct">83%</div></div>
+        <div class="barrow"><div class="name">Brecha vs. benchmark del nicho</div><div class="track"><div class="fill" data-w="96" style="background:linear-gradient(90deg,#ff6a3d,#ff5a57)"></div></div><div class="pct">96%</div></div>
+        <div class="barrow"><div class="name">Tendencia (6 meses en caída)</div><div class="track"><div class="fill" data-w="95" style="background:linear-gradient(90deg,#ff6a3d,#ff5a57)"></div></div><div class="pct">95%</div></div>
+        <div class="barrow"><div class="name">Interacción muerta (comentarios ≈ 0)</div><div class="track"><div class="fill" data-w="98" style="background:linear-gradient(90deg,#ff6a3d,#ff5a57)"></div></div><div class="pct">98%</div></div>
+        <p class="lead" style="margin-top:14px;margin-bottom:0"><b>Veredicto:</b> no hay bloqueo total (los Reels aún reciben algo de vistas), pero el alcance orgánico está colapsado. El daño es <b>reciente</b>, lo que la hace recuperable.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- KPIs -->
+  <section>
+    <h2><span class="dot"></span>KPIs principales · 12 métricas</h2>
+    <div class="grid kpis">
+      <div class="kpi"><div class="l">Seguidores</div><div class="v" data-count="3082">0</div><div class="d down">▼ −13 netos (28 d)</div></div>
+      <div class="kpi"><div class="l">Publicaciones</div><div class="v" data-count="551">0</div><div class="d flat">desde ago 2021</div></div>
+      <div class="kpi"><div class="l">Engagement histórico</div><div class="v">0.89%</div><div class="d flat">promedio de vida</div></div>
+      <div class="kpi"><div class="l">Engagement junio</div><div class="v down">0.08%</div><div class="d down">▼ −91% vs histórico</div></div>
+      <div class="kpi"><div class="l">Alcance gente nueva (jun)</div><div class="v down" data-count="66">0</div><div class="d down">▼ −99.5% vs enero</div></div>
+      <div class="kpi"><div class="l">Reach total 2026</div><div class="v" data-count="38139">0</div><div class="d flat">38k personas</div></div>
+      <div class="kpi"><div class="l">Vistas totales 2026</div><div class="v" data-count="163928">0</div><div class="d flat">videos + feed</div></div>
+      <div class="kpi"><div class="l">Guardados (junio)</div><div class="v down" data-count="0">0</div><div class="d down">▼ era 46 en enero</div></div>
+      <div class="kpi"><div class="l">Reach por post (jun)</div><div class="v down" data-count="74">0</div><div class="d down">▼ −93% vs enero</div></div>
+      <div class="kpi"><div class="l">Visitas al perfil 2026</div><div class="v" data-count="1664">0</div><div class="d flat">277/mes prom.</div></div>
+      <div class="kpi"><div class="l">Posts sin comentarios</div><div class="v">56.8%</div><div class="d flat">313 de 551</div></div>
+      <div class="kpi"><div class="l">Audiencia México</div><div class="v up">93%</div><div class="d up">real · 0 fantasma</div></div>
+    </div>
+  </section>
+
+  <!-- COLLAPSE -->
+  <section>
+    <h2><span class="dot"></span>El hallazgo · el algoritmo cortó la distribución</h2>
+    <p class="lead">El alcance venía sobre todo de <b>no-seguidores</b> (Reels en Explorar). Esa llave se cerró casi por completo en 6 semanas.</p>
+    <div class="chartbox"><canvas id="reachChart" role="img" aria-label="Alcance a no-seguidores cae de 13181 en enero a 66 en junio 2026"></canvas></div>
+    <div class="legend"><span><span class="sw" style="background:#4aa8ff"></span>No-seguidores (gente nueva)</span><span><span class="sw" style="background:#6e6480"></span>Seguidores actuales</span></div>
+    <div class="flag r"><div class="t">Caída de distribución a gente nueva: −99.5% (13,181 → 66)</div><div class="x">Hasta abril el algoritmo repartía la cuenta a 6,000–13,000 personas nuevas al mes. En junio llega a 66.</div></div>
+  </section>
+
+  <!-- NEW ANALYSIS -->
+  <section>
+    <h2><span class="dot"></span>Análisis nuevo · publicar más, alcanzar menos</h2>
+    <p class="lead">Lo que no habíamos cruzado: <b>frecuencia de publicación contra alcance por post</b>. La cuenta publicó MÁS en 2026 y cada post rindió MENOS — la prueba dura de la sobrepublicación.</p>
+    <div class="two">
+      <div>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Posts publicados vs. alcance por post (2026)</p>
+        <div class="chartbox" style="height:260px"><canvas id="freqChart" role="img" aria-label="Reach por post cae de 1096 en enero a 74 en junio mientras se mantiene el volumen de posts"></canvas></div>
+        <div class="legend"><span><span class="sw" style="background:#a78bfa"></span>Posts en el mes</span><span><span class="sw" style="background:#ff6a3d"></span>Reach por post</span></div>
+      </div>
+      <div>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Tasa de guardado vs. umbral sano (saves ÷ alcance)</p>
+        <div class="chartbox" style="height:260px"><canvas id="saveRateChart" role="img" aria-label="La tasa de guardado se mantiene por debajo del 1% saludable todo el 2026, llegando a 0% en junio"></canvas></div>
+        <div class="legend"><span><span class="sw" style="background:#2ee6a6"></span>Tasa de guardado real</span><span><span class="sw" style="background:#ffb02e"></span>Umbral sano (~1%)</span></div>
+      </div>
+    </div>
+    <div class="flag a"><div class="t">Reach por post: 1,096 → 74 (−93%) sin bajar el volumen</div><div class="x">En enero cada post alcanzaba ~1,100 personas; en junio, 74. Subir la frecuencia (13–16 posts/mes) no compensó: el algoritmo reparte por calidad, no por cantidad.</div></div>
+    <div class="flag r"><div class="t">La señal de guardado nunca pasó del 0.44% — el umbral sano es ~1%</div><div class="x">Guardar y compartir es la métrica #1 que IG usa para decidir si reparte un Reel. La cuenta vivió siempre por debajo del mínimo, y en junio tocó 0%. Esta es la causa raíz del throttling.</div></div>
+  </section>
+
+  <!-- WHY -->
+  <section>
+    <h2><span class="dot"></span>¿Por qué se quemó? La mecánica</h2>
+    <div class="why">
+      <div class="step"><div class="n">1</div><div><div class="t">El motor era el alcance a no-seguidores</div><div class="x">Los Reels en Explorar traían 90%+ del alcance. Ese era el crecimiento, no los seguidores actuales.</div></div></div>
+      <div class="step"><div class="n">2</div><div><div class="t">Pero la señal de valor era débil</div><div class="x">14,243 de alcance en enero generó solo 46 guardados (0.32%) y 15 compartidos. Guardar y compartir es lo que IG mide para seguir repartiendo.</div></div></div>
+      <div class="step"><div class="n">3</div><div><div class="t">Contenido de venta + tema off-topic</div><div class="x">Posts muy de producto y una racha temática de "Mundial/fútbol" que la audiencia de skincare no guarda ni comparte.</div></div></div>
+      <div class="step"><div class="n">4</div><div><div class="t">El algoritmo bajó la distribución → espiral</div><div class="x">Menos guardados → menos alcance → menos guardados. Publicar MÁS aceleró la caída en vez de frenarla.</div></div></div>
+      <div class="step"><div class="n">5</div><div><div class="t">La llave se cerró (may–jun)</div><div class="x">Junio: 66 personas nuevas alcanzadas y 0 guardados. La cuenta hoy le habla casi solo a sus seguidores.</div></div></div>
+    </div>
+  </section>
+
+  <!-- TREND + SAVES -->
+  <section>
+    <h2><span class="dot"></span>5 años de engagement · y el colapso de la señal</h2>
+    <div class="two">
+      <div>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Engagement rate mensual (58 meses)</p>
+        <div class="chartbox" style="height:240px"><canvas id="erChart" role="img" aria-label="Engagement rate cae de 3.85% en 2021 a 0.078% en 2026"></canvas></div>
+      </div>
+      <div>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Guardados + compartidos por mes (2026)</p>
+        <div class="chartbox" style="height:240px"><canvas id="savesChart" role="img" aria-label="Guardados caen de 46 en enero a 0 en junio"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORMAT -->
+  <section>
+    <h2><span class="dot"></span>Rendimiento por formato</h2>
+    <div style="overflow-x:auto">
+    <table>
+      <tr><th>Formato</th><th>Posts</th><th>% feed</th><th>Likes prom.</th><th>Engagement</th><th>Lectura</th></tr>
+      <tr><td>🎬 Reel <span class="pill g">mejor</span></td><td class="num">145</td><td class="num">26%</td><td class="num">36.3</td><td class="num">1.26%</td><td style="color:var(--muted)">Único con alcance real. Infrautilizado.</td></tr>
+      <tr><td>🖼️ Foto</td><td class="num">326</td><td class="num">59%</td><td class="num">23.2</td><td class="num">0.78%</td><td style="color:var(--muted)">Sobre-usada. Bajo retorno.</td></tr>
+      <tr><td>🎠 Carrusel</td><td class="num">80</td><td class="num">15%</td><td class="num">20.4</td><td class="num">0.69%</td><td style="color:var(--muted)">Guardable, desaprovechado.</td></tr>
+    </table>
+    </div>
+    <div class="flag a"><div class="t">El feed está 59% en el formato que peor rinde</div><div class="x">El Reel rinde 60% más engagement y es el único que genera alcance nuevo, pero es solo 1 de cada 4 posts.</div></div>
+  </section>
+
+  <!-- AUDIENCE -->
+  <section>
+    <h2><span class="dot"></span>La audiencia es real, local y valiosa</h2>
+    <div class="two">
+      <div>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Edad y género</p>
+        <div class="chartbox" style="height:230px"><canvas id="ageChart" role="img" aria-label="Mayoría de seguidores mujeres de 25 a 44 años"></canvas></div>
+        <div class="legend"><span><span class="sw" style="background:#ff5c8a"></span>78% mujeres</span><span><span class="sw" style="background:#4aa8ff"></span>11% hombres</span><span><span class="sw" style="background:#6e6480"></span>11% s/d</span></div>
+      </div>
+      <div>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Top ciudades (seguidores)</p>
+        <div class="barrow"><div class="name">Zapopan, Jalisco</div><div class="track"><div class="fill" data-w="100" style="background:linear-gradient(90deg,#ff6a3d,#ff5c8a)"></div></div><div class="pct">591</div></div>
+        <div class="barrow"><div class="name">Ciudad de México</div><div class="track"><div class="fill" data-w="61" style="background:linear-gradient(90deg,#ff6a3d,#ff5c8a)"></div></div><div class="pct">359</div></div>
+        <div class="barrow"><div class="name">Guadalajara, Jalisco</div><div class="track"><div class="fill" data-w="55" style="background:linear-gradient(90deg,#ff6a3d,#ff5c8a)"></div></div><div class="pct">325</div></div>
+        <div class="barrow"><div class="name">Tlajomulco / Tlaquepaque</div><div class="track"><div class="fill" data-w="16" style="background:linear-gradient(90deg,#ff6a3d,#ff5c8a)"></div></div><div class="pct">94</div></div>
+        <div class="barrow"><div class="name">Monterrey, NL</div><div class="track"><div class="fill" data-w="7" style="background:linear-gradient(90deg,#ff6a3d,#ff5c8a)"></div></div><div class="pct">40</div></div>
+        <div class="flag g"><div class="t">Núcleo tapatío + 93% México</div><div class="x">78% mujeres de 25–44 en el área metro de Guadalajara. Perfil ideal para una marca de skincare local. No hay seguidores fantasma: el problema es el contenido, no la audiencia.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <div>Consultora DV · Fuente: Meta Graph API (insights privados) + scrape de los 551 posts</div>
+    <div style="margin-top:8px">
+      <span class="badge">Reporte confidencial</span>
+      <span class="badge">Generado jun 2026</span>
+      <span class="badge">v2 · dark</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const FONT="-apple-system,Segoe UI,Roboto,sans-serif";
+Chart.defaults.font.family=FONT; Chart.defaults.font.size=12; Chart.defaults.color="#9b8fa8";
+Chart.defaults.borderColor="rgba(255,255,255,.06)";
+const noLeg={legend:{display:false}};
+const gridY={color:"rgba(255,255,255,.06)"}, gridX={display:false};
+
+/* reveal on scroll */
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll('section').forEach(s=>io.observe(s));
+
+/* gauge + bars on load */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{ document.getElementById('needle').style.transform='rotate(70.2deg)'; },250);
+  document.querySelectorAll('.fill').forEach(f=>{ if(f.dataset.w) setTimeout(()=>f.style.width=f.dataset.w+'%',300); });
+  /* count up */
+  const cu=(el,to,dec=0)=>{const dur=1300,t0=performance.now();const step=(t)=>{let p=Math.min(1,(t-t0)/dur);p=1-Math.pow(1-p,3);el.textContent=(to*p).toLocaleString('en-US',{maximumFractionDigits:dec});if(p<1)requestAnimationFrame(step);else el.textContent=to.toLocaleString('en-US');};requestAnimationFrame(step);};
+  const g=document.getElementById('gcount'); cu(g,89);
+  document.querySelectorAll('[data-count]').forEach(el=>{const obs=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){cu(el,+el.dataset.count);obs.unobserve(el)}})},{threshold:.5});obs.observe(el);});
+});
+
+new Chart(reachChart,{type:'bar',data:{labels:['Ene','Feb','Mar','Abr','May','Jun*'],
+  datasets:[{label:'No-seguidores',data:[13181,9834,3461,6053,1023,66],backgroundColor:'#4aa8ff',borderRadius:5},
+            {label:'Seguidores',data:[921,904,665,926,783,308],backgroundColor:'#5a5170',borderRadius:5}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:noLeg,
+    scales:{x:{stacked:true,grid:gridX},y:{stacked:true,grid:gridY,ticks:{callback:v=>v>=1000?v/1000+'k':v}}}}});
+
+new Chart(freqChart,{data:{labels:['Ene','Feb','Mar','Abr','May','Jun*'],
+  datasets:[
+    {type:'bar',label:'Posts',data:[13,16,14,12,9,5],backgroundColor:'#a78bfa',borderRadius:5,yAxisID:'y'},
+    {type:'line',label:'Reach/post',data:[1096,670,296,573,198,74],borderColor:'#ff6a3d',backgroundColor:'#ff6a3d',tension:.35,borderWidth:3,pointRadius:3,yAxisID:'y1'}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:noLeg,
+    scales:{x:{grid:gridX},y:{position:'left',grid:gridY,title:{display:true,text:'posts'}},y1:{position:'right',grid:{display:false},title:{display:true,text:'reach/post'}}}}});
+
+new Chart(saveRateChart,{type:'line',data:{labels:['Ene','Feb','Mar','Abr','May','Jun*'],
+  datasets:[
+    {label:'Tasa real',data:[0.32,0.15,0.22,0.44,0.28,0.00],borderColor:'#2ee6a6',backgroundColor:'rgba(46,230,166,.12)',fill:true,tension:.35,borderWidth:3,pointRadius:3},
+    {label:'Umbral sano',data:[1,1,1,1,1,1],borderColor:'#ffb02e',borderDash:[6,5],borderWidth:2,pointRadius:0,fill:false}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:noLeg,
+    scales:{x:{grid:gridX},y:{beginAtZero:true,grid:gridY,ticks:{callback:v=>v+'%'}}}}});
+
+const erLabels=["ago-21","oct","dic","feb-22","abr","jun","ago","oct","dic","feb-23","abr","jun","ago","oct","dic","feb-24","abr","jun","ago","oct","dic","feb-25","abr","jun","ago","oct","dic","feb-26","abr","jun"];
+const erData=[3.853,1.691,1.176,1.341,1.186,0.926,1.428,0.985,0.600,0.742,0.909,0.623,3.199,1.020,0.593,0.795,1.045,1.024,0.448,0.448,0.335,1.141,1.107,1.049,0.828,0.432,0.267,0.205,0.173,0.078];
+new Chart(erChart,{type:'line',data:{labels:erLabels,datasets:[{data:erData,borderColor:'#ff5c8a',backgroundColor:'rgba(255,92,138,.10)',fill:true,tension:.3,pointRadius:0,borderWidth:2}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:noLeg,scales:{x:{grid:gridX,ticks:{maxTicksLimit:8,maxRotation:0}},y:{beginAtZero:true,grid:gridY,ticks:{callback:v=>v+'%'}}}}});
+
+new Chart(savesChart,{type:'bar',data:{labels:['Ene','Feb','Mar','Abr','May','Jun*'],
+  datasets:[{label:'Guardados',data:[46,16,9,30,5,0],backgroundColor:'#2ee6a6',borderRadius:5},
+            {label:'Compartidos',data:[15,14,7,18,6,2],backgroundColor:'#ffb02e',borderRadius:5}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:11,boxHeight:11,color:'#9b8fa8'}}},scales:{x:{grid:gridX},y:{beginAtZero:true,grid:gridY}}}});
+
+new Chart(ageChart,{type:'bar',data:{labels:['13-17','18-24','25-34','35-44','45-54','55-64','65+'],
+  datasets:[{data:[4,295,1560,820,300,76,27],backgroundColor:['#3a3350','#ff8a5a','#ff5c8a','#ff6a3d','#c77','#3a3350','#3a3350'],borderRadius:5}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:noLeg,scales:{x:{grid:gridX},y:{beginAtZero:true,grid:gridY}}}});
+</script>
+</body>
+</html>
