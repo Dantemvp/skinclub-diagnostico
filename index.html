@@ -92,6 +92,34 @@
   .pill{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 9px;border-radius:20px;margin-left:6px}
   .pill.r{background:var(--red-bg);color:#ff8d8b} .pill.g{background:var(--green-bg);color:var(--green)} .pill.a{background:var(--amber-bg);color:var(--amber)}
 
+  /* rehab */
+  .rehab{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
+  @media(max-width:860px){.rehab{grid-template-columns:1fr}}
+  .phase{background:#15101d;border:1px solid var(--line);border-radius:16px;padding:18px;border-top:3px solid}
+  .phase.p1{border-top-color:#2ee6a6} .phase.p2{border-top-color:#4aa8ff} .phase.p3{border-top-color:#a78bfa}
+  .phead{display:flex;flex-direction:column;gap:3px;margin-bottom:12px}
+  .pday{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+  .p1 .pday{color:#2ee6a6} .p2 .pday{color:#4aa8ff} .p3 .pday{color:#a78bfa}
+  .ptitle{font-size:17px;font-weight:800;color:var(--ink)}
+  .pgoal{font-size:12.5px;color:var(--muted);background:#1b1426;border-radius:10px;padding:9px 11px;margin-bottom:12px}
+  .pgoal i{color:var(--ink);font-style:normal;font-weight:700}
+  .pacts{list-style:none;display:grid;gap:9px}
+  .pacts li{font-size:12.8px;color:var(--muted);padding-left:18px;position:relative;line-height:1.5}
+  .pacts li::before{content:"";position:absolute;left:0;top:7px;width:7px;height:7px;border-radius:50%;background:#3a2f4d}
+  .pacts li b{color:var(--ink);font-weight:700}
+  .pgate{margin-top:14px;font-size:11.5px;color:var(--muted);border-radius:10px;padding:10px 12px;background:var(--amber-bg);border:1px solid rgba(255,176,46,.25)}
+  .pgate.ok{background:var(--green-bg);border-color:rgba(46,230,166,.3)}
+  .gk{display:block;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#ffb02e;font-size:10.5px;margin-bottom:3px}
+  .pgate.ok .gk{color:#2ee6a6}
+  .budget{display:flex;align-items:center;gap:12px;margin:12px 0;flex-wrap:wrap}
+  .bchart{flex:0 0 96px;height:96px;position:relative}
+  .blegend{flex:1;min-width:160px;display:grid;gap:10px}
+  .brow{font-size:12px;color:var(--muted)} .brow b{color:var(--ink);font-size:14px}
+  .bdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+  .bsub{display:block;font-size:11px;color:var(--dim);margin-top:2px}
+  .checklist{display:grid;gap:7px;margin-top:12px}
+  .ck{font-size:12px;color:var(--ink);padding-left:24px;position:relative}
+  .ck::before{content:"○";position:absolute;left:4px;top:-1px;color:#a78bfa;font-weight:700}
   .foot{text-align:center;color:var(--dim);font-size:12px;margin-top:30px;line-height:1.8}
   .badge{display:inline-block;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:3px 10px;margin:2px}
 </style>
@@ -270,6 +298,65 @@
     <div class="flag a"><div class="t">Desajuste: más volumen en los peores momentos</div><div class="x">94 posts caen en viernes (día más flojo) y solo 21 a las 15 h (la mejor hora). Reasignar el calendario a la ventana óptima sube el alcance sin producir más.</div></div>
   </section>
 
+  <!-- REHAB 30-60-90 -->
+  <section>
+    <h2><span class="dot"></span>Plan de rehabilitación · 30 / 60 / 90 días</h2>
+    <p class="lead">Una ruta en tres fases para reabrir la distribución, escalar con pauta inteligente y confirmar que la cuenta quedó sana. Cada fase tiene una <b>meta medible</b> que debe cumplirse antes de pasar a la siguiente.</p>
+
+    <div class="rehab">
+      <!-- FASE 1 -->
+      <div class="phase p1">
+        <div class="phead"><span class="pday">Día 1–30</span><span class="ptitle">Reactivación orgánica</span></div>
+        <div class="pgoal"><i>🎯 Objetivo:</i> reabrir el alcance y recuperar la señal de guardado/compartido sin gastar en pauta.</div>
+        <ul class="pacts">
+          <li><b>Reels de valor</b> cada 2–3 días (1 al día máximo). Pausar las fotos sueltas que arrastran la cuenta.</li>
+          <li><b>2–3 colaboraciones</b> con cuentas afines (skincare, beauty, marcas tapatías): el formato "colab" comparte tu post con la audiencia de la otra cuenta.</li>
+          <li><b>Empuje manual los primeros 60 min</b>: responder todos los comentarios y pedir a equipo, familia y clientas que comenten, guarden y compartan a stories.</li>
+          <li><b>Stories diarias</b> con encuestas, preguntas y quiz: señal de interacción barata que reactiva el alcance.</li>
+          <li>Rotar hashtags y temas; salir del loop de producto/fútbol que apagó la distribución.</li>
+        </ul>
+        <div class="pgate"><span class="gk">Meta para avanzar</span> ER &gt; 0.5% · tasa de guardado &gt; 1% · alcance a no-seguidores recuperando</div>
+      </div>
+
+      <!-- FASE 2 -->
+      <div class="phase p2">
+        <div class="phead"><span class="pday">Día 31–60</span><span class="ptitle">Amplificación con pauta + UGC</span></div>
+        <div class="pgoal"><i>🎯 Objetivo:</i> escalar con dinero lo que ya funciona orgánicamente y construir públicos calientes.</div>
+        <ul class="pacts">
+          <li><b>Contenido funcional</b> (rutinas, antes/después, ingredientes) + <b>UGC de clientas</b> reales — el formato que más se guarda y comparte.</li>
+          <li><b>Pauta sin objetivo de seguidores.</b> Distribución del presupuesto:</li>
+        </ul>
+        <div class="budget">
+          <div class="bchart"><canvas id="budgetChart" role="img" aria-label="65 por ciento amplificación de Reels, 35 por ciento conversión a venta"></canvas></div>
+          <div class="blegend">
+            <div class="brow"><span class="bdot" style="background:#4aa8ff"></span><b>65%</b> Amplificar Reels UGC <span class="bsub">objetivo interacción/reproducciones → reconstruye alcance y arma públicos calientes</span></div>
+            <div class="brow"><span class="bdot" style="background:#2ee6a6"></span><b>35%</b> Conversión a venta <span class="bsub">retargeting de quien ya interactuó + lookalike de compradores → optimiza a compra, no a follows</span></div>
+          </div>
+        </div>
+        <div class="pgate"><span class="gk">Meta para avanzar</span> primeras ventas atribuidas · CTR sano · público de retargeting &gt; 5k · CPM estable</div>
+      </div>
+
+      <!-- FASE 3 -->
+      <div class="phase p3">
+        <div class="phead"><span class="pday">Día 61–90</span><span class="ptitle">Confirmación y escala</span></div>
+        <div class="pgoal"><i>🎯 Objetivo:</i> validar que la rehabilitación es estable y escalar lo que gana.</div>
+        <ul class="pacts">
+          <li>Mantener la cadencia y los formatos ganadores; doblar presupuesto en los ángulos que rindieron.</li>
+          <li>Escalar la pauta de venta solo sobre creativos ya validados en la fase 2.</li>
+          <li>Revisión semanal de las 5 métricas de salud; si alguna se estanca, diagnóstico del freno.</li>
+        </ul>
+        <div class="checklist">
+          <div class="ck">Engagement rate &gt; 1%</div>
+          <div class="ck">Alcance a no-seguidores &gt; 3,000/mes y creciendo</div>
+          <div class="ck">Crecimiento neto de seguidores positivo</div>
+          <div class="ck">Tasa de guardado &gt; 1%</div>
+          <div class="ck">Reels con rendimiento consistente</div>
+        </div>
+        <div class="pgate ok"><span class="gk">✓ Cuenta rehabilitada</span> si las 5 se cumplen → pasar de recuperación a crecimiento</div>
+      </div>
+    </div>
+  </section>
+
   <div class="foot">
     <div>Consultora DV · Fuente: Meta Graph API (insights privados) + scrape de los 551 posts</div>
     <div style="margin-top:8px">
@@ -341,6 +428,10 @@ const dowER=[0.936,0.867,0.840,0.792,0.735,0.814,0.743];
 new Chart(dowChart,{type:'bar',data:{labels:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],
   datasets:[{data:dowER,backgroundColor:dowER.map(v=>v>=0.9?'#2ee6a6':v<=0.75?'#ff5a57':'#a78bfa'),borderRadius:5}]},
   options:{responsive:true,maintainAspectRatio:false,plugins:noLeg,scales:{x:{grid:gridX},y:{beginAtZero:true,grid:gridY,ticks:{callback:v=>v+'%'}}}}});
+
+new Chart(budgetChart,{type:'doughnut',data:{labels:['Amplificar Reels','Conversión'],
+  datasets:[{data:[65,35],backgroundColor:['#4aa8ff','#2ee6a6'],borderColor:'#15101d',borderWidth:2}]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{display:false},tooltip:{enabled:false}}}});
 
 const hourLabels=['9h','10h','11h','12h','13h','14h','15h','16h','17h','18h','19h','20h','21h'];
 const hourData=[15.6,19.3,29.2,29.0,24.1,24.1,35.7,26.5,20.3,11.6,24.9,20.1,7.8];
